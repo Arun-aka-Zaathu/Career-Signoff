@@ -46,7 +46,16 @@ def check_required_columns(file_path, sheet_name, required_columns):
 
     workbook = openpyxl.load_workbook(file_path)
 
+    # Check if sheet exists first
+    if sheet_name not in workbook.sheetnames:
+        return {
+            "status": "ERROR",
+            "message": f"Missing sheet: {sheet_name}"
+        }
+
+
     sheet = workbook[sheet_name]
+
 
     existing_columns = []
 
@@ -63,6 +72,13 @@ def check_required_columns(file_path, sheet_name, required_columns):
 
 
     if len(missing_columns) == 0:
-        return True
+        return {
+            "status": "PASS",
+            "message": "All required columns are present"
+        }
 
-    return missing_columns
+
+    return {
+        "status": "WARNING",
+        "missing_columns": missing_columns
+    }
